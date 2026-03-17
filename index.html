@@ -30,9 +30,8 @@
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             z-index: -1;
-            background: radial-gradient(ellipse at 30% 50%, rgba(255,200,150,0.15) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 30%, rgba(201,74,106,0.2) 0%, transparent 40%);
-            animation: gradientShift 8s ease-in-out infinite;
+            background: radial-gradient(ellipse at 50% 50%, rgba(201,74,106,0.1) 0%, transparent 60%);
+            
         }
 
         @keyframes gradientShift {
@@ -50,6 +49,8 @@
         }
 
         .floating-frame {
+            will-change: transform;
+            transform: translateZ(0);
             position: absolute;
             border-radius: 12px;
             overflow: hidden;
@@ -63,7 +64,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: blur(2px) brightness(2); /* Drastically less blur, much brighter GIF */
+            filter: brightness(1.2); will-change: transform; /* Drastically less blur, much brighter GIF */
             transform: scale(1.1); /* Slightly scale to avoid blur edges */
         }
 
@@ -71,10 +72,10 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, rgba(255,180,100,0.3), rgba(255,100,50,0.3)); /* Glowy haze */
-            mix-blend-mode: overlay; /* Blend mode for glow effect */
+             /* Blend mode for glow effect */
             pointer-events: none;
             z-index: 2; /* Above the GIF */
-            filter: blur(5px); /* Much less blur for the haze itself */
+             /* Much less blur for the haze itself */
         }
 
         .floating-frame::before {
@@ -129,7 +130,7 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(135deg, rgba(255,180,100,0.2), rgba(255,100,50,0.2)); /* Even lighter haze */
-            mix-blend-mode: overlay;
+            
             pointer-events: none;
             z-index: 2;
             filter: blur(4px); /* Much less blur for the haze itself */
@@ -760,7 +761,9 @@
             .stats-grid, .testimonials-grid { grid-template-columns: 1fr; gap: 40px; }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); }
             .logos-grid { gap: 50px; }
-            .floating-frame { display: none; }
+            .floating-frame {
+            will-change: transform;
+            transform: translateZ(0); display: none; }
         }
     </style>
 </head>
@@ -804,8 +807,9 @@
         <!-- Hero -->
         <section class="section" id="s1">
             <div class="text-overlay visible">
-                <h1>WHERE CODE MEETS<br>CINEMA</h1>
-                <p style="margin-top: 20px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Storytelling. Not just prompting. Welcome to the next evolution of the Big Screen Hack.</p>
+                <h1>THE BIG SCREEN<br>HACK</h1>
+                <h2 style="font-size: 2rem; font-weight: 400; margin-top: 20px; color: #ffddaa; letter-spacing: 2px;">WHERE CODE MEETS CINEMA</h2>
+                <p style="margin-top: 20px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Storytelling. Not just prompting. Welcome to the next evolution.</p>
                 <a href="#s4" style="display: inline-block; margin-top: 30px; padding: 15px 30px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; text-decoration: none; border-radius: 30px; backdrop-filter: blur(10px); font-weight: 500; letter-spacing: 1px; transition: all 0.3s ease;">JOIN THE ROAD TO CANNES</a>
                 <div class="scroll-indicator">
                     <span>SCROLL</span>
