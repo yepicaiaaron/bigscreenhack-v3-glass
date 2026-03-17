@@ -64,8 +64,10 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(1.2); will-change: transform; /* Drastically less blur, much brighter GIF */
-            transform: scale(1.1); /* Slightly scale to avoid blur edges */
+            filter: brightness(0.6) contrast(1.1);
+            opacity: 0.4;
+            will-change: transform;
+            transform: scale(1.1);
         }
 
         .floating-frame .video-haze-overlay {
@@ -207,6 +209,12 @@
             opacity: 0;
             transform: translateY(80px) scale(0.95);
             transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.2);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
         }
 
         .text-overlay.visible {
@@ -1031,9 +1039,9 @@
             
             let mediaTag = '';
             if (src.endsWith('.mp4')) {
-                mediaTag = `<video class="screen-video" src="${src}" autoplay loop muted playsinline></video>`;
+                mediaTag = ``; // Removed video from assembling panels
             } else {
-                mediaTag = `<img class="screen-video" src="${src}" alt="Cinema screen content" />`;
+                mediaTag = ``; // Removed image from assembling panels
             }
             
             screen.innerHTML = `
