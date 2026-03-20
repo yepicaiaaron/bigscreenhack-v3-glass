@@ -793,27 +793,63 @@
         .frame-video {
             transition: filter 0.5s ease-out, opacity 0.5s ease-out;
         }
+
+        @keyframes jitter {
+            0%, 100% { background-position: 0 0; }
+            50% { background-position: 5px -5px; }
+        }
+        
+        .scratch {
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 100vh;
+            background: rgba(255,255,255,0.15);
+            pointer-events: none;
+            z-index: 4;
+            animation: scratch 4s infinite;
+            opacity: 0;
+        }
+
+        @keyframes scratch {
+            0%, 100% { opacity: 0; transform: translateX(0); }
+            10% { opacity: 0.5; transform: translateX(2vw); }
+            12% { opacity: 0; }
+            40% { opacity: 0; transform: translateX(-2vw); }
+            42% { opacity: 0.3; }
+            44% { opacity: 0; }
+        }
     </style>
+
 </head>
 <body>
 
     
     
+    
     <div id="intro-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; overflow: hidden; background: #000;">
+        <!-- Film Effects -->
+        <div id="film-grain" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 4; opacity: 0.3; background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalTurbulence%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E'); mix-blend-mode: overlay; animation: jitter 0.2s infinite steps(2);"></div>
+        <div id="film-scratch1" class="scratch" style="left: 20%; animation-delay: 0.1s;"></div>
+        <div id="film-scratch2" class="scratch" style="left: 75%; animation-delay: 1.5s;"></div>
+
         <!-- Cinematic Framing (Letterboxing) -->
         <div id="cine-top" style="position: absolute; top: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3;"></div>
-        <div id="cine-bottom" style="position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3;"></div>
+        <div id="cine-bottom" style="position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5vh;">
+            <div id="scroll-prompt" style="color: #fff; font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.4em; opacity: 0; transform: translateY(20px);">SCROLL TO START FILM</div>
+        </div>
         
-        <!-- Text -->
-        <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; width: 100%;">
-            <div class="intro-word" id="word-the" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">THE</div>
-            <div class="intro-word" id="word-big" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">BIG</div>
-            <div class="intro-word" id="word-screen" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">SCREEN</div>
-            <div class="intro-word" id="word-hack" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">HACK</div>
+        <!-- Text - Positioned dead center sequentially -->
+        <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: 2; width: 100%; height: 100%;">
+            <div class="intro-word" id="word-the" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 12vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">THE</div>
+            <div class="intro-word" id="word-big" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 15vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">BIG</div>
+            <div class="intro-word" id="word-screen" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 11vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">SCREEN</div>
+            <div class="intro-word" id="word-hack" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 12vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">HACK</div>
         </div>
     </div>
-    <div id="intro-scroll-spacer" style="height: 300vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
-    <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 300vh;">
+    <div id="intro-scroll-spacer" style="height: 500vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 500vh;">
+
 
 
     <div class="sunset-bg"></div>
@@ -1161,8 +1197,8 @@
         function updateScreens() {
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            const adjustedScroll = Math.max(0, scrollY - (window.innerHeight * 3));
-            const adjustedMax = maxScroll - (window.innerHeight * 3);
+            const adjustedScroll = Math.max(0, scrollY - (window.innerHeight * 5));
+            const adjustedMax = maxScroll - (window.innerHeight * 5);
             const progress = Math.min(adjustedScroll / (adjustedMax || 1), 1);
             
             // 1. Move Central Screens - Assembly Logic
@@ -1312,56 +1348,61 @@
 
         
         
+        
         // --- INTRO SEQUENCE LOGIC ---
+        // Initial state - open bars slightly, show scroll prompt
+        gsap.to("#cine-top", { height: "15vh", duration: 1.5, ease: "power2.inOut", delay: 0.5 });
+        gsap.to("#cine-bottom", { height: "15vh", duration: 1.5, ease: "power2.inOut", delay: 0.5 });
+        gsap.to("#scroll-prompt", { opacity: 0.6, y: 0, duration: 1, delay: 1.5 });
+        gsap.to("#intro-container", { backgroundColor: "transparent", duration: 1, delay: 1.5 });
+
         const tlIntro = gsap.timeline({
             scrollTrigger: {
                 trigger: "#intro-scroll-spacer",
                 start: "top top",
                 end: "bottom top",
-                scrub: 1.2
+                scrub: 1.5
             }
         });
 
-        // 1. Cinematic Bars open slightly to frame the text (Letterbox 21:9)
-        tlIntro.to("#cine-top", { height: "15vh", duration: 1, ease: "power2.inOut" }, 0);
-        tlIntro.to("#cine-bottom", { height: "15vh", duration: 1, ease: "power2.inOut" }, 0);
-        tlIntro.to("#intro-container", { backgroundColor: "transparent", duration: 1 }, 0);
+        // 0. Hide prompt
+        tlIntro.to("#scroll-prompt", { opacity: 0, duration: 0.1 }, 0);
 
-        // 2. Text reveals (blur to sharp, staggered)
-        tlIntro.to("#word-the", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 0.2);
-        tlIntro.to("#word-big", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 0.6);
-        tlIntro.to("#word-screen", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 1.0);
-        tlIntro.to("#word-hack", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 1.4);
-        
-        // 3. Text lens push (Scale up, blur out, fade out, tracking expands)
-        tlIntro.to(".intro-word", { 
-            scale: 3, 
-            opacity: 0, 
-            filter: "blur(15px)", 
-            letterSpacing: "0.5em",
-            stagger: 0.1, 
-            duration: 1.5, 
-            ease: "power2.in" 
-        }, 2.5);
-        
-        // 4. Cinematic Bars open completely to full screen
-        tlIntro.to("#cine-top", { height: "0vh", duration: 1, ease: "power3.inOut" }, 3.2);
-        tlIntro.to("#cine-bottom", { height: "0vh", duration: 1, ease: "power3.inOut" }, 3.2);
+        // 1. THE
+        tlIntro.to("#word-the", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "power1.out" }, 0.1);
+        tlIntro.to("#word-the", { opacity: 0, filter: "blur(15px)", scale: 4, duration: 0.3, ease: "power2.in" }, 0.5);
 
-        // 5. Fade IN the main website (and enable pointer events)
+        // 2. BIG
+        tlIntro.to("#word-big", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "power1.out" }, 0.9);
+        tlIntro.to("#word-big", { opacity: 0, filter: "blur(15px)", scale: 4, duration: 0.3, ease: "power2.in" }, 1.3);
+
+        // 3. SCREEN
+        tlIntro.to("#word-screen", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "power1.out" }, 1.7);
+        tlIntro.to("#word-screen", { opacity: 0, filter: "blur(15px)", scale: 4, duration: 0.3, ease: "power2.in" }, 2.1);
+
+        // 4. HACK
+        tlIntro.to("#word-hack", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "power1.out" }, 2.5);
+        tlIntro.to("#word-hack", { opacity: 0, filter: "blur(15px)", scale: 4, duration: 0.3, ease: "power2.in" }, 2.9);
+        
+        // 5. Cinematic Bars open completely to full screen
+        tlIntro.to("#cine-top", { height: "0vh", duration: 0.8, ease: "power3.inOut" }, 3.3);
+        tlIntro.to("#cine-bottom", { height: "0vh", duration: 0.8, ease: "power3.inOut" }, 3.3);
+
+        // 6. Fade IN the main website (and enable pointer events)
         tlIntro.to("#main-site-wrapper", {
             opacity: 1,
             pointerEvents: "auto",
-            duration: 0.5
-        }, 3.8);
+            duration: 0.4
+        }, 3.7);
 
         // Fade in fixed parallax elements
         gsap.set(".parallax-layer, .screens-container, #beam, #sparkles", { opacity: 0 });
         tlIntro.to(".parallax-layer, .screens-container, #beam, #sparkles", {
             opacity: 1,
-            duration: 0.5
-        }, 3.8);
+            duration: 0.4
+        }, 3.7);
         // --- END INTRO LOGIC ---
+
 
 
 
