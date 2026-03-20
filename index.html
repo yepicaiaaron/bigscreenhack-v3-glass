@@ -14,7 +14,7 @@
             background: transparent; 
             font-family: 'Montserrat', sans-serif; 
             overflow-x: hidden;
-            background-color: #0a0510;
+            background-color: #0f172a;
         }
         
         /* Animated gradient background - Pastel Glass */
@@ -23,7 +23,7 @@
             top: 0; left: 0; 
             width: 100vw; height: 100vh; 
             z-index: 1;
-            background: linear-gradient(180deg, #020617 0%, #0f172a 30%, #1e293b 70%, #475569 100%);
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 30%, #38bdf8 70%, #e0f2fe 100%); /* Much lighter silver/blue */
         }
 
         .gradient-anim {
@@ -31,7 +31,7 @@
             top: 0; left: 0;
             width: 100vw; height: 100vh;
             z-index: 2;
-            background: radial-gradient(ellipse at 50% 50%, rgba(200, 220, 255, 0.1) 0%, transparent 60%);
+            background: radial-gradient(ellipse at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
             
         }
 
@@ -104,13 +104,14 @@
             perspective: 1000px;
         }
 
+        
         .screen {
             position: absolute;
-            background: rgba(255,255,255,0.1); /* Frosted glass look */
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px); /* Heavy blur */
+            box-shadow: 0 0 30px rgba(255,255,255,0.15), inset 0 0 20px rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
             transform-style: preserve-3d;
             transition: transform 0.1s linear;
             overflow: hidden;
@@ -120,29 +121,28 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: blur(1px) brightness(2); /* Drastically less blur, much brighter for screens (GIFs) */
-            transform: scale(1.1); /* Slightly scale to avoid blur edges */
-            opacity: 0.9; /* Much higher opacity for screens to see GIF content */
+            filter: blur(1px) brightness(1.5);
+            transform: scale(1.1);
+            opacity: 0.9;
         }
 
         .screen .video-haze-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(186,230,253,0.2), rgba(248,250,252,0.2)); /* Even lighter haze */
-            
+            background: linear-gradient(135deg, rgba(186,230,253,0.1), rgba(248,250,252,0.1));
             pointer-events: none;
             z-index: 2;
-            filter: blur(4px); /* Much less blur for the haze itself */
+            filter: blur(4px);
         }
 
         .screen::before {
             content: '';
             position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 4px;
-            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: none; /* No border here! */
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
             animation: shimmer 4s infinite;
+            opacity: 0.5; /* Make the shimmer more subtle */
         }
 
         @keyframes shimmer {
@@ -1081,7 +1081,7 @@
             screen.style.height = `${h}px`;
             
             // Generate more varied Z-depth
-            const startZ = Math.random() * 800 - 400; // -400 to 400 depth spread
+            const startZ = Math.random() * 600 - 800; // Push way back into the background
 
             const startRotX = (Math.random() - 0.5) * 45;
             const startRotY = (Math.random() - 0.5) * 45;
@@ -1149,7 +1149,7 @@
                 let currentZ = s.startZ + (s.targetZ - s.startZ) * phase1Progress;
                 let currentRotY = s.startRotY + phase1Progress * 20; // gentle drift, no flipping
                 let currentRotX = s.startRotX + phase1Progress * 15; // gentle drift
-                let currentOpacity = 0.3 + phase1Progress * 0.7;
+                let currentOpacity = 0.1 + phase1Progress * 0.4;
 
                 // Phase 2: Assemble into Building Grid (0.6 to 1.0 progress)
                 if (progress > 0.6) {
