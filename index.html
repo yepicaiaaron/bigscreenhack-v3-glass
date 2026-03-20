@@ -1056,8 +1056,8 @@
             // Generate more varied Z-depth
             const startZ = Math.random() * 800 - 400; // -400 to 400 depth spread
 
-            const startRotX = Math.random() * 360;
-            const startRotY = Math.random() * 360;
+            const startRotX = (Math.random() - 0.5) * 45;
+            const startRotY = (Math.random() - 0.5) * 45;
             
             screen.style.left = '50%';
             screen.style.top = '50%';
@@ -1120,8 +1120,8 @@
                 let currentX = s.startX + (s.targetX - s.startX) * phase1Progress;
                 let currentY = s.startY + (s.targetY - s.startY) * phase1Progress;
                 let currentZ = s.startZ + (s.targetZ - s.startZ) * phase1Progress;
-                let currentRotY = s.startRotY + phase1Progress * 360;
-                let currentRotX = 45 + phase1Progress * 45;
+                let currentRotY = s.startRotY + phase1Progress * 20; // gentle drift, no flipping
+                let currentRotX = s.startRotX + phase1Progress * 15; // gentle drift
                 let currentOpacity = 0.3 + phase1Progress * 0.7;
 
                 // Phase 2: Assemble into Building Grid (0.6 to 1.0 progress)
@@ -1147,7 +1147,7 @@
                     currentZ = currentZ + (buildingZ - currentZ) * easeOutBack;
                     
                     // Flatten rotations to face forward
-                    currentRotY = currentRotY + (0 - (currentRotY % 360)) * easeOutBack;
+                    currentRotY = currentRotY + (0 - currentRotY) * easeOutBack;
                     currentRotX = currentRotX + (0 - currentRotX) * easeOutBack;
                     
                     // Increase opacity to max when assembled
