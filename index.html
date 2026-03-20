@@ -56,7 +56,7 @@
             overflow: hidden;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 60px rgba(186,230,253,0.4);
             border: 2px solid rgba(255,255,255,0.2);
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, box-shadow 0.5s ease-out, z-index 0.5s;
+            transition: transform 0.4s ease-out, opacity 0.5s ease-out, box-shadow 0.5s ease-out, z-index 0.5s;
             background: transparent; /* Changed to transparent as video will provide background */
         }
 
@@ -88,11 +88,11 @@
             z-index: 1;
         }
 
-        .frame-1 { width: 22vw; height: 35vh; top: 0; left: 10vw; }
-        .frame-2 { width: 18vw; height: 28vh; top: 0; left: 60vw; }
-        .frame-3 { width: 25vw; height: 20vh; top: 0; right: 15vw; }
-        .frame-4 { width: 15vw; height: 30vh; top: 0; left: 20vw; }
-        .frame-5 { width: 28vw; height: 25vh; top: 0; right: 25vw; }
+        .frame-1 { width: 22vw; height: 35vh; top: -10vh; left: -10vw; }
+        .frame-2 { width: 18vw; height: 28vh; top: 110vh; right: -10vw; }
+        .frame-3 { width: 25vw; height: 20vh; top: 50vh; left: -20vw; }
+        .frame-4 { width: 15vw; height: 30vh; top: -20vh; right: 20vw; }
+        .frame-5 { width: 28vw; height: 25vh; top: 120vh; left: 40vw; }
 
         /* Floating screens */
         .screens-container {
@@ -803,27 +803,27 @@
     
     <!-- Parallax layers -->
     <div class="parallax-layer" id="parallax-deep">
-        <div class="floating-frame frame-1" data-speed="0.8" data-dir="1">
+        <div class="floating-frame frame-1" data-speed="0.8" data-dirx="1" data-diry="1">
             <img class="frame-video" src="https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop" alt="Cinema" />
             <div class="video-haze-overlay"></div>
         </div>
-        <div class="floating-frame frame-2" data-speed="1.2" data-dir="1">
+        <div class="floating-frame frame-2" data-speed="1.2" data-dirx="-1" data-diry="-1">
             <video class="frame-video" src="https://www.w3schools.com/html/mov_bbb.mp4" autoplay loop muted playsinline></video>
             <div class="video-haze-overlay"></div>
         </div>
     </div>
     <div class="parallax-layer" id="parallax-mid">
-        <div class="floating-frame frame-3" data-speed="1.5" data-dir="-1">
+        <div class="floating-frame frame-3" data-speed="1.5" data-dirx="1" data-diry="-0.2">
             <img class="frame-video" src="https://media.giphy.com/media/26tn33aiTi1jIGn5e/giphy.gif" alt="Pitch" />
             <div class="video-haze-overlay"></div>
         </div>
-        <div class="floating-frame frame-4" data-speed="0.9" data-dir="-1">
+        <div class="floating-frame frame-4" data-speed="0.9" data-dirx="-0.5" data-diry="1">
             <img class="frame-video" src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=600&auto=format&fit=crop" alt="Clapperboard" />
             <div class="video-haze-overlay"></div>
         </div>
     </div>
     <div class="parallax-layer" id="parallax-front">
-        <div class="floating-frame frame-5" data-speed="2.2" data-dir="1">
+        <div class="floating-frame frame-5" data-speed="1.8" data-dirx="-1" data-diry="-1">
             <img class="frame-video" src="https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif" alt="Win" />
             <div class="video-haze-overlay"></div>
         </div>
@@ -1186,25 +1186,32 @@
             });
             
             
-            // 2. Horizontal Frame Parallax (Now staggered vertical entry)
+            
+            // 2. Diagonal Frame Parallax (accelerated by scroll)
+            // Added exponential curve so movement accelerates as you scroll deeper
+            const scrollAccel = Math.pow(progress, 1.5);
+            
             frames.forEach((frame, index) => {
                 const speed = parseFloat(frame.dataset.speed);
-                const targetProgress = (index * 0.2) + 0.1;
-                const diff = progress - targetProgress;
-                const currentY = 20 - (diff * 600 * speed);
+                const dirX = parseFloat(frame.dataset.dirx);
+                const dirY = parseFloat(frame.dataset.diry);
                 
-                const scale = frame.isHovered ? 1.5 : 1;
-                const z = frame.isHovered ? 100 : 0;
-                
-                frame.style.transform = `translate3d(0, ${currentY}vh, ${z}px) scale(${scale})`;
+                // Base movement driven by scroll curve
+                const moveX = scrollAccel * 150 * speed * dirX; 
+                const moveY = scrollAccel * 150 * speed * dirY;
                 
                 if (frame.isHovered) {
+                    // Lock position when hovered, just scale up
+                    frame.style.transform = `translate3d(${moveX}vw, ${moveY}vh, 100px) scale(1.4)`;
                     frame.style.opacity = '1';
                 } else {
-                    let op = 1 - (Math.abs(diff) * 2.5);
-                    frame.style.opacity = Math.max(0, Math.min(0.7, op));
+                    frame.style.transform = `translate3d(${moveX}vw, ${moveY}vh, 0) scale(1)`;
+                    // Opacity peaks in the middle of their journey
+                    let op = Math.sin(progress * Math.PI) * 0.7 + 0.1;
+                    frame.style.opacity = Math.max(0.1, op);
                 }
             });
+
 
 
             
@@ -1251,19 +1258,21 @@
         window.addEventListener('scroll', updateScreens);
         
         
+        
         frames.forEach(frame => {
             frame.addEventListener('mouseenter', () => {
                 frame.isHovered = true;
                 frame.style.zIndex = '100';
-                updateScreens();
+                updateScreens(); // Apply scale and opacity from render loop
             });
             frame.addEventListener('mouseleave', () => {
                 frame.isHovered = false;
                 frame.style.zIndex = '';
-                updateScreens();
+                updateScreens(); // Revert back
             });
             frame.style.pointerEvents = 'auto'; 
         });
+
 
 
         updateScreens();
