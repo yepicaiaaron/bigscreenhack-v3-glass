@@ -819,10 +819,65 @@
             42% { opacity: 0.3; }
             44% { opacity: 0; }
         }
+
+        @keyframes pulseArrow {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(10px); opacity: 0.3; }
+        }
+
+        .site-logo {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 10000;
+            color: #fff;
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            font-weight: 600;
+            mix-blend-mode: difference;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeIn 2s forwards 1s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .partner-band {
+            width: 100vw;
+            padding: 20px 0;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 5vw;
+            backdrop-filter: blur(10px);
+            margin-top: 10vh;
+            pointer-events: auto;
+        }
+
+        .partner-band span {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.6);
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+        
+        .partner-band span:hover {
+            color: #fff;
+        }
     </style>
+
 
 </head>
 <body>
+    <div class="site-logo">VIDEOSTACK.AI</div>
 
     
     
@@ -833,12 +888,17 @@
         <div id="film-scratch1" class="scratch" style="left: 20%; animation-delay: 0.1s;"></div>
         <div id="film-scratch2" class="scratch" style="left: 75%; animation-delay: 1.5s;"></div>
 
+        
+        
         <!-- Cinematic Framing (Letterboxing) -->
         <div id="cine-top" style="position: absolute; top: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3;"></div>
-        <div id="cine-bottom" style="position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5vh;">
-            <div id="scroll-prompt" style="color: #fff; font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.4em; opacity: 0; transform: translateY(20px);">SCROLL TO START FILM</div>
+        <div id="cine-bottom" style="position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 5vh;">
+            <div id="scroll-prompt" style="color: #fff; font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.4em; opacity: 0; transform: translateY(20px); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                SCROLL TO START FILM
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: pulseArrow 1.5s infinite;"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+            </div>
         </div>
-        
+
         <!-- Text - Positioned dead center sequentially -->
         <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; z-index: 2; width: 100%; height: 100%;">
             <div class="intro-word" id="word-the" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 12vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">THE</div>
@@ -847,6 +907,8 @@
             <div class="intro-word" id="word-hack" style="position: absolute; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 12vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.1em; margin: 0; opacity: 0; filter: blur(10px); transform: scale(0.6) translateZ(0); will-change: transform, opacity, filter;">HACK</div>
         </div>
     </div>
+
+
     <div id="intro-scroll-spacer" style="height: 500vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
     <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 500vh;">
 
@@ -889,7 +951,7 @@
 
     <main>
         <!-- Hero -->
-        <section class="section" id="s1">
+        <section class="section" id="s1" style="flex-direction: column; justify-content: center; position: relative;">
             <div class="text-overlay visible">
                 <h1 style="font-size: 6vw; font-weight: 600; color: #e2e8f0; letter-spacing: 2px; text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">WHERE CODE MEETS CINEMA</h1>
                 <p style="margin-top: 20px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Storytelling. Not just prompting. Welcome to the next evolution.</p>
@@ -898,8 +960,18 @@
                     <span>SCROLL</span>
                     <div class="scroll-line"></div>
                 </div>
+
+            </div>
+            
+            <div class="partner-band" style="position: absolute; bottom: 0;">
+                <span>VIDEOSTACK.AI</span>
+                <span>BYTEPLUS</span>
+                <span>ELEVENLABS</span>
+                <span>RUNWARE</span>
+                <span>RECDEK HOUSE</span>
             </div>
         </section>
+
 
         <!-- Stats -->
         <section class="section" id="s2">
