@@ -106,10 +106,10 @@
 
         .screen {
             position: absolute;
-            background: rgba(255,255,255,0.1); /* Frosted glass look */
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.05); /* Frosted glass look */
+            border: 1px solid transparent;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.1); /* Glow effect */
             backdrop-filter: blur(10px); /* Heavy blur */
             transform-style: preserve-3d;
             transition: transform 0.1s linear;
@@ -136,10 +136,10 @@
         }
 
         .screen::before {
-            content: '';
+            content: \'\';
             position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: none; /* Removed the weird border */
             border-radius: 4px;
             background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
             animation: shimmer 4s infinite;
@@ -1081,7 +1081,7 @@
             screen.style.height = `${h}px`;
             
             // Generate more varied Z-depth
-            const startZ = Math.random() * 800 - 400; // -400 to 400 depth spread
+            const startZ = Math.random() * 800 - 800; // Push way back into the background (-800 to 0)
 
             const startRotX = (Math.random() - 0.5) * 45;
             const startRotY = (Math.random() - 0.5) * 45;
@@ -1149,7 +1149,7 @@
                 let currentZ = s.startZ + (s.targetZ - s.startZ) * phase1Progress;
                 let currentRotY = s.startRotY + phase1Progress * 20; // gentle drift, no flipping
                 let currentRotX = s.startRotX + phase1Progress * 15; // gentle drift
-                let currentOpacity = 0.3 + phase1Progress * 0.7;
+                let currentOpacity = 0.1 + phase1Progress * 0.4;
 
                 // Phase 2: Assemble into Building Grid (0.6 to 1.0 progress)
                 if (progress > 0.6) {
