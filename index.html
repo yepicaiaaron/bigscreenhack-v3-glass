@@ -48,7 +48,6 @@
             pointer-events: none;
             z-index: 4;
         }
-
         .floating-frame {
             will-change: transform;
             transform: translateZ(0);
@@ -57,7 +56,7 @@
             overflow: hidden;
             box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 60px rgba(186,230,253,0.4);
             border: 2px solid rgba(255,255,255,0.2);
-            transition: transform 0.3s ease-out;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, box-shadow 0.5s ease-out, z-index 0.5s;
             background: transparent; /* Changed to transparent as video will provide background */
         }
 
@@ -89,11 +88,11 @@
             z-index: 1;
         }
 
-        .frame-1 { width: 22vw; height: 35vh; top: 15%; left: -25vw; }
-        .frame-2 { width: 18vw; height: 28vh; top: 55%; left: -20vw; }
-        .frame-3 { width: 25vw; height: 20vh; top: 25%; right: -30vw; }
-        .frame-4 { width: 15vw; height: 30vh; top: 65%; right: -20vw; }
-        .frame-5 { width: 28vw; height: 25vh; top: 40%; left: -30vw; }
+        .frame-1 { width: 22vw; height: 35vh; top: 15%; left: 10vw; }
+        .frame-2 { width: 18vw; height: 28vh; top: 55%; left: 5vw; }
+        .frame-3 { width: 25vw; height: 20vh; top: 25%; right: 10vw; }
+        .frame-4 { width: 15vw; height: 30vh; top: 65%; right: 5vw; }
+        .frame-5 { width: 28vw; height: 25vh; top: 40%; left: 35vw; }
 
         /* Floating screens */
         .screens-container {
@@ -764,7 +763,35 @@
             .stats-grid, .testimonials-grid { grid-template-columns: 1fr; gap: 40px; }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); }
             .logos-grid { gap: 50px; }
-            .floating-frame {
+            
+        .floating-frame {
+            pointer-events: auto; /* make them hoverable */
+            transition: opacity 0.5s ease-out, box-shadow 0.5s ease-out; /* Note: JS handles transform */
+        }
+        
+        .floating-frame:hover {
+            box-shadow: 0 50px 150px rgba(0,0,0,0.9), 0 0 100px rgba(186,230,253,0.8);
+            z-index: 100 !important;
+        }
+
+        .floating-frame:hover .frame-video {
+            filter: brightness(1.1) contrast(1.1);
+            opacity: 1;
+        }
+        
+        .floating-frame:hover .video-haze-overlay {
+            opacity: 0 !important;
+        }
+        
+        .video-haze-overlay {
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .frame-video {
+            transition: filter 0.5s ease-out, opacity 0.5s ease-out;
+        }
+
+        .floating-frame {
             will-change: transform;
             transform: translateZ(0); display: none; }
         }
@@ -1012,7 +1039,7 @@
         
         // Create screens
         const screensContainer = document.getElementById('screens');
-        const numScreens = 30;
+        const numScreens = 15;
         const screens = [];
 
         for(let i = 0; i < numScreens; i++) {
@@ -1159,19 +1186,17 @@
             });
             
             // 2. Horizontal Frame Parallax
+            
             frames.forEach(frame => {
                 const speed = parseFloat(frame.dataset.speed);
-                const dir = parseFloat(frame.dataset.dir);
-                // Move from off-screen left/right toward center, then past it
-                const moveAmount = (progress * 100 * speed * dir);
-                
-                // Add a slight vertical drift for elegance
                 const driftY = progress * 20 * speed;
                 
-                frame.style.transform = `translate3d(${moveAmount}vw, ${driftY}vh, 0)`;
-                // Fade in as they move in, fade out as they leave
-                frame.style.opacity = Math.sin(progress * Math.PI);
+                if (!frame.isHovered) {
+                    frame.style.transform = `translate3d(0, ${driftY}vh, 0) scale(1)`;
+                    frame.style.opacity = Math.sin(progress * Math.PI) * 0.8 + 0.2;
+                }
             });
+
             
             // 3. Center beam
             if(progress > 0.3 && progress < 0.8) {
@@ -1214,6 +1239,26 @@
         }
 
         window.addEventListener('scroll', updateScreens);
+        
+        frames.forEach(frame => {
+            frame.addEventListener('mouseenter', () => {
+                frame.isHovered = true;
+                frame.style.transform = 'translate3d(0, 0, 100px) scale(1.5)';
+                frame.style.opacity = '1';
+                frame.style.zIndex = '100';
+            });
+            frame.addEventListener('mouseleave', () => {
+                frame.isHovered = false;
+                frame.style.zIndex = '';
+                updateScreens(); // trigger reset
+            });
+        });
+        
+        // Initial setup for frames so they don't jump
+        frames.forEach(frame => {
+            frame.style.pointerEvents = 'auto'; 
+        });
+
         updateScreens();
     </script>
 </body>
