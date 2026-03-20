@@ -796,6 +796,12 @@
     </style>
 </head>
 <body>
+
+    <canvas id="tunnel-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none;"></canvas>
+    <div id="tunnel-scroll-spacer" style="height: 300vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    <h1 id="tunnel-text" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; z-index: 9998; text-shadow: 0 0 40px rgba(56, 189, 248, 0.8); text-align: center; white-space: nowrap; pointer-events: none; letter-spacing: 4px; margin: 0;">THE BIG SCREEN HACK</h1>
+    <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 300vh;">
+
     <div class="sunset-bg"></div>
     <div class="gradient-anim"></div>
     
@@ -835,8 +841,7 @@
         <!-- Hero -->
         <section class="section" id="s1">
             <div class="text-overlay visible">
-                <h1>THE BIG SCREEN<br>HACK</h1>
-                <h2 style="font-size: 2rem; font-weight: 400; margin-top: 20px; color: #e2e8f0; letter-spacing: 2px;">WHERE CODE MEETS CINEMA</h2>
+                <h1 style="font-size: 6vw; font-weight: 600; color: #e2e8f0; letter-spacing: 2px; text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">WHERE CODE MEETS CINEMA</h1>
                 <p style="margin-top: 20px; font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Storytelling. Not just prompting. Welcome to the next evolution.</p>
                 <a href="#s4" style="display: inline-block; margin-top: 30px; padding: 15px 30px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; text-decoration: none; border-radius: 30px; backdrop-filter: blur(10px); font-weight: 500; letter-spacing: 1px; transition: all 0.3s ease;">JOIN THE ROAD TO CANNES</a>
                 <div class="scroll-indicator">
@@ -1031,7 +1036,14 @@
         </section>
     </main>
 
+
+    </div> <!-- Close main-site-wrapper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <script>
+        gsap.registerPlugin(ScrollTrigger);
         // Create floating image frames for parallax
         const frames = document.querySelectorAll('.floating-frame');
         
@@ -1135,7 +1147,9 @@
         function updateScreens() {
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            const progress = Math.min(scrollY / maxScroll, 1);
+            const adjustedScroll = Math.max(0, scrollY - (window.innerHeight * 3));
+            const adjustedMax = maxScroll - (window.innerHeight * 3);
+            const progress = Math.min(adjustedScroll / (adjustedMax || 1), 1);
             
             // 1. Move Central Screens - Assembly Logic
             screens.forEach((s, i) => {
@@ -1281,6 +1295,126 @@
 
 
         updateScreens();
+
+        // --- WEBGL TUNNEL LOGIC ---
+        const tunnelCanvas = document.getElementById('tunnel-canvas');
+        const tScene = new THREE.Scene();
+        tScene.fog = new THREE.FogExp2(0x0f172a, 0.0015); // Match background
+
+        const tCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 3000);
+        tCamera.position.z = 0;
+
+        const tRenderer = new THREE.WebGLRenderer({ canvas: tunnelCanvas, alpha: true, antialias: true });
+        tRenderer.setSize(window.innerWidth, window.innerHeight);
+        tRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const tAmbient = new THREE.AmbientLight(0xffffff, 0.5);
+        tScene.add(tAmbient);
+        const tPoint = new THREE.PointLight(0xbae6fd, 2, 1000);
+        tScene.add(tPoint);
+
+        // Glass panels forming the tunnel
+        const panelGeo = new THREE.PlaneGeometry(16, 9);
+        const panelMat = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 0.2,
+            roughness: 0.1,
+            transmission: 0.9,
+            opacity: 1,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+
+        const numPanels = 400;
+        const instancedPanels = new THREE.InstancedMesh(panelGeo, panelMat, numPanels);
+        const dummy = new THREE.Object3D();
+
+        for(let j=0; j<numPanels; j++) {
+            const angle = Math.random() * Math.PI * 2;
+            // Tunnel radius narrows slightly in the distance to force perspective
+            const radius = 25 + Math.random() * 40; 
+            const z = -(Math.random() * 2500); 
+            
+            dummy.position.set(Math.cos(angle)*radius, Math.sin(angle)*radius, z);
+            
+            // Align them to somewhat face the center
+            dummy.lookAt(0, 0, z);
+            // Add some random scatter rotation
+            dummy.rotation.x += (Math.random() - 0.5);
+            dummy.rotation.y += (Math.random() - 0.5);
+            
+            dummy.updateMatrix();
+            instancedPanels.setMatrixAt(j, dummy.matrix);
+        }
+        tScene.add(instancedPanels);
+
+        let tMouseX = 0;
+        let tMouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            tMouseX = (e.clientX / window.innerWidth) * 2 - 1;
+            tMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function tAnimate() {
+            requestAnimationFrame(tAnimate);
+            tPoint.position.copy(tCamera.position);
+            
+            // Subtle camera drift based on mouse
+            tCamera.position.x += (tMouseX * 5 - tCamera.position.x) * 0.05;
+            tCamera.position.y += (tMouseY * 5 - tCamera.position.y) * 0.05;
+            
+            // Slowly rotate the tunnel for kinetic energy
+            instancedPanels.rotation.z -= 0.001;
+
+            tRenderer.render(tScene, tCamera);
+        }
+        tAnimate();
+
+        window.addEventListener('resize', () => {
+            tCamera.aspect = window.innerWidth/window.innerHeight;
+            tCamera.updateProjectionMatrix();
+            tRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // GSAP Sequence for the Intro
+        const tlIntro = gsap.timeline({
+            scrollTrigger: {
+                trigger: "#tunnel-scroll-spacer",
+                start: "top top",
+                end: "bottom top",
+                scrub: 1.5
+            }
+        });
+
+        // Fly camera through the tunnel
+        tlIntro.to(tCamera.position, { z: -2500, ease: "power2.inOut" }, 0);
+        
+        // Push through the text
+        tlIntro.to("#tunnel-text", {
+            scale: 20,
+            opacity: 0,
+            ease: "power3.in",
+            duration: 0.4 // Happens in the first 40% of the scroll
+        }, 0);
+
+        // Fade out the WebGL canvas at the end
+        tlIntro.to(tunnelCanvas, { opacity: 0, duration: 0.2 }, 0.8);
+
+        // Fade IN the main website (and enable pointer events)
+        tlIntro.to("#main-site-wrapper", {
+            opacity: 1,
+            pointerEvents: "auto",
+            duration: 0.2
+        }, 0.8);
+
+        // Hide fixed parallax elements initially, then fade them in
+        gsap.set(".parallax-layer, .screens-container, #beam, #sparkles", { opacity: 0 });
+        tlIntro.to(".parallax-layer, .screens-container, #beam, #sparkles", {
+            opacity: 1,
+            duration: 0.2
+        }, 0.8);
+        // --- END WEBGL TUNNEL LOGIC ---
+
     </script>
 </body>
 </html>
