@@ -797,10 +797,26 @@
 </head>
 <body>
 
-    <canvas id="tunnel-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none;"></canvas>
-    <div id="tunnel-scroll-spacer" style="height: 300vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
-    <h1 id="tunnel-text" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; z-index: 9998; text-shadow: 0 0 40px rgba(56, 189, 248, 0.8); text-align: center; white-space: nowrap; pointer-events: none; letter-spacing: 4px; margin: 0;">THE BIG SCREEN HACK</h1>
+    
+    <div id="intro-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; overflow: hidden; background: transparent;">
+        <!-- Curtains -->
+        <div id="curtain-left" style="position: absolute; top: 0; left: 0; width: 50vw; height: 100vh; background: #020617; border-right: 1px solid rgba(56, 189, 248, 0.4); box-shadow: inset -20px 0 50px rgba(0,0,0,0.8); z-index: 1;"></div>
+        <div id="curtain-right" style="position: absolute; top: 0; right: 0; width: 50vw; height: 100vh; background: #020617; border-left: 1px solid rgba(56, 189, 248, 0.4); box-shadow: inset 20px 0 50px rgba(0,0,0,0.8); z-index: 1;"></div>
+        
+        <!-- Light Slivers/Glow -->
+        <div id="center-glow" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 100vh; background: #bae6fd; box-shadow: 0 0 40px 10px rgba(56, 189, 248, 0.8), 0 0 100px 30px rgba(56, 189, 248, 0.5); z-index: 0; opacity: 0;"></div>
+
+        <!-- Text -->
+        <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2;">
+            <h1 class="intro-word" id="word-the" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">THE</h1>
+            <h1 class="intro-word" id="word-big" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">BIG</h1>
+            <h1 class="intro-word" id="word-screen" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">SCREEN</h1>
+            <h1 class="intro-word" id="word-hack" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">HACK</h1>
+        </div>
+    </div>
+    <div id="intro-scroll-spacer" style="height: 300vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
     <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 300vh;">
+
 
     <div class="sunset-bg"></div>
     <div class="gradient-anim"></div>
@@ -1038,7 +1054,7 @@
 
 
     </div> <!-- Close main-site-wrapper -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
@@ -1296,124 +1312,47 @@
 
         updateScreens();
 
-        // --- WEBGL TUNNEL LOGIC ---
-        const tunnelCanvas = document.getElementById('tunnel-canvas');
-        const tScene = new THREE.Scene();
-        tScene.fog = new THREE.FogExp2(0x0f172a, 0.0015); // Match background
-
-        const tCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 3000);
-        tCamera.position.z = 0;
-
-        const tRenderer = new THREE.WebGLRenderer({ canvas: tunnelCanvas, alpha: true, antialias: true });
-        tRenderer.setSize(window.innerWidth, window.innerHeight);
-        tRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const tAmbient = new THREE.AmbientLight(0xffffff, 0.5);
-        tScene.add(tAmbient);
-        const tPoint = new THREE.PointLight(0xbae6fd, 2, 1000);
-        tScene.add(tPoint);
-
-        // Glass panels forming the tunnel
-        const panelGeo = new THREE.PlaneGeometry(16, 9);
-        const panelMat = new THREE.MeshPhysicalMaterial({
-            color: 0xffffff,
-            metalness: 0.2,
-            roughness: 0.1,
-            transmission: 0.9,
-            opacity: 1,
-            transparent: true,
-            side: THREE.DoubleSide
-        });
-
-        const numPanels = 400;
-        const instancedPanels = new THREE.InstancedMesh(panelGeo, panelMat, numPanels);
-        const dummy = new THREE.Object3D();
-
-        for(let j=0; j<numPanels; j++) {
-            const angle = Math.random() * Math.PI * 2;
-            // Tunnel radius narrows slightly in the distance to force perspective
-            const radius = 25 + Math.random() * 40; 
-            const z = -(Math.random() * 2500); 
-            
-            dummy.position.set(Math.cos(angle)*radius, Math.sin(angle)*radius, z);
-            
-            // Align them to somewhat face the center
-            dummy.lookAt(0, 0, z);
-            // Add some random scatter rotation
-            dummy.rotation.x += (Math.random() - 0.5);
-            dummy.rotation.y += (Math.random() - 0.5);
-            
-            dummy.updateMatrix();
-            instancedPanels.setMatrixAt(j, dummy.matrix);
-        }
-        tScene.add(instancedPanels);
-
-        let tMouseX = 0;
-        let tMouseY = 0;
-        document.addEventListener('mousemove', (e) => {
-            tMouseX = (e.clientX / window.innerWidth) * 2 - 1;
-            tMouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-        });
-
-        function tAnimate() {
-            requestAnimationFrame(tAnimate);
-            tPoint.position.copy(tCamera.position);
-            
-            // Subtle camera drift based on mouse
-            tCamera.position.x += (tMouseX * 5 - tCamera.position.x) * 0.05;
-            tCamera.position.y += (tMouseY * 5 - tCamera.position.y) * 0.05;
-            
-            // Slowly rotate the tunnel for kinetic energy
-            instancedPanels.rotation.z -= 0.001;
-
-            tRenderer.render(tScene, tCamera);
-        }
-        tAnimate();
-
-        window.addEventListener('resize', () => {
-            tCamera.aspect = window.innerWidth/window.innerHeight;
-            tCamera.updateProjectionMatrix();
-            tRenderer.setSize(window.innerWidth, window.innerHeight);
-        });
-
-        // GSAP Sequence for the Intro
+        
+        // --- INTRO SEQUENCE LOGIC ---
         const tlIntro = gsap.timeline({
             scrollTrigger: {
-                trigger: "#tunnel-scroll-spacer",
+                trigger: "#intro-scroll-spacer",
                 start: "top top",
                 end: "bottom top",
-                scrub: 1.5
+                scrub: 1
             }
         });
 
-        // Fly camera through the tunnel
-        tlIntro.to(tCamera.position, { z: -2500, ease: "power2.inOut" }, 0);
+        // 1. Text reveals (staggered)
+        tlIntro.to("#word-the", { opacity: 1, scale: 1, duration: 0.5 }, 0);
+        tlIntro.to("#word-big", { opacity: 1, scale: 1, duration: 0.5 }, 0.5);
+        tlIntro.to("#word-screen", { opacity: 1, scale: 1, duration: 0.5 }, 1.0);
+        tlIntro.to("#word-hack", { opacity: 1, scale: 1, duration: 0.5 }, 1.5);
         
-        // Push through the text
-        tlIntro.to("#tunnel-text", {
-            scale: 20,
-            opacity: 0,
-            ease: "power3.in",
-            duration: 0.4 // Happens in the first 40% of the scroll
-        }, 0);
+        // 2. Light flare + Text lens push
+        tlIntro.to("#center-glow", { opacity: 1, width: "20vw", duration: 1 }, 2.0);
+        tlIntro.to(".intro-word", { scale: 5, opacity: 0, stagger: 0.1, duration: 1.5, ease: "power2.in" }, 2.0);
+        
+        // 3. Curtains Open
+        tlIntro.to("#curtain-left", { xPercent: -100, duration: 1.5, ease: "power3.inOut" }, 3.0);
+        tlIntro.to("#curtain-right", { xPercent: 100, duration: 1.5, ease: "power3.inOut" }, 3.0);
+        tlIntro.to("#center-glow", { opacity: 0, duration: 0.5 }, 3.0);
 
-        // Fade out the WebGL canvas at the end
-        tlIntro.to(tunnelCanvas, { opacity: 0, duration: 0.2 }, 0.8);
-
-        // Fade IN the main website (and enable pointer events)
+        // 4. Fade IN the main website (and enable pointer events)
         tlIntro.to("#main-site-wrapper", {
             opacity: 1,
             pointerEvents: "auto",
-            duration: 0.2
-        }, 0.8);
+            duration: 0.5
+        }, 3.5);
 
-        // Hide fixed parallax elements initially, then fade them in
+        // Fade in fixed parallax elements
         gsap.set(".parallax-layer, .screens-container, #beam, #sparkles", { opacity: 0 });
         tlIntro.to(".parallax-layer, .screens-container, #beam, #sparkles", {
             opacity: 1,
-            duration: 0.2
-        }, 0.8);
-        // --- END WEBGL TUNNEL LOGIC ---
+            duration: 0.5
+        }, 3.5);
+        // --- END INTRO LOGIC ---
+
 
     </script>
 </body>
