@@ -88,11 +88,11 @@
             z-index: 1;
         }
 
-        .frame-1 { width: 22vw; height: 35vh; top: -10vh; left: -10vw; }
-        .frame-2 { width: 18vw; height: 28vh; top: 110vh; right: -10vw; }
-        .frame-3 { width: 25vw; height: 20vh; top: 50vh; left: -20vw; }
-        .frame-4 { width: 15vw; height: 30vh; top: -20vh; right: 20vw; }
-        .frame-5 { width: 28vw; height: 25vh; top: 120vh; left: 40vw; }
+        .frame-1 { width: 22vw; height: 35vh; top: 10vh; left: -5vw; }
+        .frame-2 { width: 18vw; height: 28vh; top: 80vh; right: -5vw; }
+        .frame-3 { width: 25vw; height: 20vh; top: 120vh; left: -10vw; }
+        .frame-4 { width: 15vw; height: 30vh; top: -10vh; right: -5vw; }
+        .frame-5 { width: 28vw; height: 25vh; top: 150vh; right: -15vw; }
 
         /* Floating screens */
         .screens-container {
@@ -763,37 +763,29 @@
             .stats-grid, .testimonials-grid { grid-template-columns: 1fr; gap: 40px; }
             .gallery-grid { grid-template-columns: repeat(2, 1fr); }
             .logos-grid { gap: 50px; }
-            
-        .floating-frame {
-            pointer-events: auto; /* make them hoverable */
-            transition: opacity 0.5s ease-out, box-shadow 0.5s ease-out; /* Note: JS handles transform */
+            .floating-frame { display: none; }
         }
-        
+
+        .floating-frame {
+            pointer-events: auto;
+            transition: opacity 0.5s ease-out, box-shadow 0.5s ease-out;
+        }
         .floating-frame:hover {
             box-shadow: 0 50px 150px rgba(0,0,0,0.9), 0 0 100px rgba(186,230,253,0.8);
             z-index: 100 !important;
         }
-
         .floating-frame:hover .frame-video {
             filter: brightness(1.1) contrast(1.1);
             opacity: 1;
         }
-        
         .floating-frame:hover .video-haze-overlay {
             opacity: 0 !important;
         }
-        
         .video-haze-overlay {
             transition: opacity 0.5s ease-out;
         }
-        
         .frame-video {
             transition: filter 0.5s ease-out, opacity 0.5s ease-out;
-        }
-
-        .floating-frame {
-            will-change: transform;
-            transform: translateZ(0); display: none; }
         }
     </style>
 </head>
@@ -1187,9 +1179,10 @@
             
             
             
+            
             // 2. Diagonal Frame Parallax (accelerated by scroll)
             // Added exponential curve so movement accelerates as you scroll deeper
-            const scrollAccel = Math.pow(progress, 1.5);
+            const scrollAccel = Math.pow(progress, 1.2) * 1.5;
             
             frames.forEach((frame, index) => {
                 const speed = parseFloat(frame.dataset.speed);
@@ -1197,8 +1190,8 @@
                 const dirY = parseFloat(frame.dataset.diry);
                 
                 // Base movement driven by scroll curve
-                const moveX = scrollAccel * 150 * speed * dirX; 
-                const moveY = scrollAccel * 150 * speed * dirY;
+                const moveX = scrollAccel * 40 * speed * dirX; 
+                const moveY = scrollAccel * 100 * speed * dirY;
                 
                 if (frame.isHovered) {
                     // Lock position when hovered, just scale up
@@ -1211,6 +1204,7 @@
                     frame.style.opacity = Math.max(0.1, op);
                 }
             });
+
 
 
 
