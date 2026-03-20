@@ -798,20 +798,18 @@
 <body>
 
     
-    <div id="intro-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; overflow: hidden; background: transparent;">
-        <!-- Curtains -->
-        <div id="curtain-left" style="position: absolute; top: 0; left: 0; width: 50vw; height: 100vh; background: #020617; border-right: 1px solid rgba(56, 189, 248, 0.4); box-shadow: inset -20px 0 50px rgba(0,0,0,0.8); z-index: 1;"></div>
-        <div id="curtain-right" style="position: absolute; top: 0; right: 0; width: 50vw; height: 100vh; background: #020617; border-left: 1px solid rgba(56, 189, 248, 0.4); box-shadow: inset 20px 0 50px rgba(0,0,0,0.8); z-index: 1;"></div>
+    
+    <div id="intro-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; pointer-events: none; overflow: hidden; background: #000;">
+        <!-- Cinematic Framing (Letterboxing) -->
+        <div id="cine-top" style="position: absolute; top: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3;"></div>
+        <div id="cine-bottom" style="position: absolute; bottom: 0; left: 0; width: 100vw; height: 50vh; background: #000; z-index: 3;"></div>
         
-        <!-- Light Slivers/Glow -->
-        <div id="center-glow" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 100vh; background: #bae6fd; box-shadow: 0 0 40px 10px rgba(56, 189, 248, 0.8), 0 0 100px 30px rgba(56, 189, 248, 0.5); z-index: 0; opacity: 0;"></div>
-
         <!-- Text -->
-        <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2;">
-            <h1 class="intro-word" id="word-the" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">THE</h1>
-            <h1 class="intro-word" id="word-big" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">BIG</h1>
-            <h1 class="intro-word" id="word-screen" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">SCREEN</h1>
-            <h1 class="intro-word" id="word-hack" style="color: white; font-family: 'Montserrat', sans-serif; font-size: 8vw; font-weight: 800; line-height: 1; letter-spacing: 4px; margin: 0; opacity: 0; transform: scale(0.9); text-shadow: 0 0 40px rgba(56, 189, 248, 0.8);">HACK</h1>
+        <div id="intro-text-wrapper" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; width: 100%;">
+            <div class="intro-word" id="word-the" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">THE</div>
+            <div class="intro-word" id="word-big" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">BIG</div>
+            <div class="intro-word" id="word-screen" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">SCREEN</div>
+            <div class="intro-word" id="word-hack" style="color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 7vw; font-weight: 800; line-height: 0.9; letter-spacing: 0.2em; margin: 0; opacity: 0; filter: blur(20px); transform: scale(0.8) translateZ(0); will-change: transform, opacity, filter;">HACK</div>
         </div>
     </div>
     <div id="intro-scroll-spacer" style="height: 300vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
@@ -1313,45 +1311,58 @@
         updateScreens();
 
         
+        
         // --- INTRO SEQUENCE LOGIC ---
         const tlIntro = gsap.timeline({
             scrollTrigger: {
                 trigger: "#intro-scroll-spacer",
                 start: "top top",
                 end: "bottom top",
-                scrub: 1
+                scrub: 1.2
             }
         });
 
-        // 1. Text reveals (staggered)
-        tlIntro.to("#word-the", { opacity: 1, scale: 1, duration: 0.5 }, 0);
-        tlIntro.to("#word-big", { opacity: 1, scale: 1, duration: 0.5 }, 0.5);
-        tlIntro.to("#word-screen", { opacity: 1, scale: 1, duration: 0.5 }, 1.0);
-        tlIntro.to("#word-hack", { opacity: 1, scale: 1, duration: 0.5 }, 1.5);
-        
-        // 2. Light flare + Text lens push
-        tlIntro.to("#center-glow", { opacity: 1, width: "20vw", duration: 1 }, 2.0);
-        tlIntro.to(".intro-word", { scale: 5, opacity: 0, stagger: 0.1, duration: 1.5, ease: "power2.in" }, 2.0);
-        
-        // 3. Curtains Open
-        tlIntro.to("#curtain-left", { xPercent: -100, duration: 1.5, ease: "power3.inOut" }, 3.0);
-        tlIntro.to("#curtain-right", { xPercent: 100, duration: 1.5, ease: "power3.inOut" }, 3.0);
-        tlIntro.to("#center-glow", { opacity: 0, duration: 0.5 }, 3.0);
+        // 1. Cinematic Bars open slightly to frame the text (Letterbox 21:9)
+        tlIntro.to("#cine-top", { height: "15vh", duration: 1, ease: "power2.inOut" }, 0);
+        tlIntro.to("#cine-bottom", { height: "15vh", duration: 1, ease: "power2.inOut" }, 0);
+        tlIntro.to("#intro-container", { backgroundColor: "transparent", duration: 1 }, 0);
 
-        // 4. Fade IN the main website (and enable pointer events)
+        // 2. Text reveals (blur to sharp, staggered)
+        tlIntro.to("#word-the", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 0.2);
+        tlIntro.to("#word-big", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 0.6);
+        tlIntro.to("#word-screen", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 1.0);
+        tlIntro.to("#word-hack", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.8 }, 1.4);
+        
+        // 3. Text lens push (Scale up, blur out, fade out, tracking expands)
+        tlIntro.to(".intro-word", { 
+            scale: 3, 
+            opacity: 0, 
+            filter: "blur(15px)", 
+            letterSpacing: "0.5em",
+            stagger: 0.1, 
+            duration: 1.5, 
+            ease: "power2.in" 
+        }, 2.5);
+        
+        // 4. Cinematic Bars open completely to full screen
+        tlIntro.to("#cine-top", { height: "0vh", duration: 1, ease: "power3.inOut" }, 3.2);
+        tlIntro.to("#cine-bottom", { height: "0vh", duration: 1, ease: "power3.inOut" }, 3.2);
+
+        // 5. Fade IN the main website (and enable pointer events)
         tlIntro.to("#main-site-wrapper", {
             opacity: 1,
             pointerEvents: "auto",
             duration: 0.5
-        }, 3.5);
+        }, 3.8);
 
         // Fade in fixed parallax elements
         gsap.set(".parallax-layer, .screens-container, #beam, #sparkles", { opacity: 0 });
         tlIntro.to(".parallax-layer, .screens-container, #beam, #sparkles", {
             opacity: 1,
             duration: 0.5
-        }, 3.5);
+        }, 3.8);
         // --- END INTRO LOGIC ---
+
 
 
     </script>
