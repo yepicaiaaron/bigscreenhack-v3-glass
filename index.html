@@ -11,9 +11,10 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body, html { 
-            background: #0a0510; 
+            background: transparent; 
             font-family: 'Montserrat', sans-serif; 
             overflow-x: hidden;
+            background-color: #0a0510;
         }
         
         /* Animated gradient background - Pastel Glass */
@@ -21,7 +22,7 @@
             position: fixed; 
             top: 0; left: 0; 
             width: 100vw; height: 100vh; 
-            z-index: -3;
+            z-index: 1;
             background: linear-gradient(180deg, #020617 0%, #0f172a 30%, #1e293b 70%, #475569 100%);
         }
 
@@ -29,7 +30,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            z-index: -2;
+            z-index: 2;
             background: radial-gradient(ellipse at 50% 50%, rgba(200, 220, 255, 0.1) 0%, transparent 60%);
             
         }
@@ -45,7 +46,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 4;
         }
 
         .floating-frame {
@@ -99,18 +100,17 @@
             position: fixed;
             top: 0; left: 0;
             width: 100vw; height: 100vh;
-            z-index: -1;
+            z-index: 3;
             pointer-events: none;
             perspective: 1000px;
         }
 
         .screen {
             position: absolute;
-            width: 160px; height: 100px;
             background: rgba(255,255,255,0.1); /* Frosted glass look */
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px); /* Heavy blur */
             transform-style: preserve-3d;
             transition: transform 0.1s linear;
@@ -181,7 +181,7 @@
             background: rgba(255,255,255,0.1);
             border-radius: 50%;
             box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(186,230,253,0.1);
-            z-index: 3;
+            z-index: 5;
             pointer-events: none;
         }
 
@@ -825,7 +825,7 @@
         <section class="section" id="s2">
             <div class="text-overlay" data-animate>
                 <h2>THE LEGACY</h2>
-                <p>It started at the London Film Festival. Together with the BFI, Rec Deck, and our incredible partners, we brought together the world\'s most forward-thinking creators for the ultimate Filmmaker\'s Hack.<br><br>But the future of cinema isn\'t just about how we shoot—it\'s about the tools we build.</p>
+                <p>It started at the London Film Festival. Together with the BFI, Rec Deck, and our incredible partners, we brought together the world's most forward-thinking creators for the ultimate Filmmaker's Hack.<br><br>But the future of cinema isn't just about how we shoot—it's about the tools we build.</p>
                 
                 <div class="stats-grid">
                     <div class="stat-item">
@@ -867,7 +867,7 @@
                         <img src="https://media.giphy.com/media/26tn33aiTi1jIGn5e/giphy.gif" alt="Pitching" class="slider-video-bg">
                         <div class="slider-content">
                             <h4>THE REVEAL</h4>
-                            <p>Introducing the Builder Track: Solving the industry\'s biggest problems through code.</p>
+                            <p>Introducing the Builder Track: Solving the industry's biggest problems through code.</p>
                             <div class="play-button small-play"></div>
                         </div>
                     </div>
@@ -946,7 +946,7 @@
                         </div>
                     </div>
                     <div class="testimonial-card">
-                        <p class="quote">"Show us how your code solves the industry\'s biggest problems while serving the narrative."</p>
+                        <p class="quote">"Show us how your code solves the industry's biggest problems while serving the narrative."</p>
                         <div class="author">
                             <div class="author-avatar">M</div>
                             <div class="author-info">
@@ -956,7 +956,7 @@
                         </div>
                     </div>
                     <div class="testimonial-card">
-                        <p class="quote">"The winning team won\'t just walk away with cash—your film and tech will be showcased live at our Cannes 2026 exclusive showcase."</p>
+                        <p class="quote">"The winning team won't just walk away with cash—your film and tech will be showcased live at our Cannes 2026 exclusive showcase."</p>
                         <div class="author">
                             <div class="author-avatar">A</div>
                             <div class="author-info">
@@ -987,7 +987,7 @@
         <section class="section" id="s7">
             <div class="text-overlay" data-animate>
                 <h1 style="background: linear-gradient(to bottom, #e2e8f0 0%, #bae6fd 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">THE STAKES</h1>
-                <p>The ultimate winning team won\'t just walk away with a prize pool.<br>Your film and your tech will be showcased live at our Cannes 2026 exclusive showcase.</p>
+                <p>The ultimate winning team won't just walk away with a prize pool.<br>Your film and your tech will be showcased live at our Cannes 2026 exclusive showcase.</p>
             </div>
         </section>
 
@@ -995,7 +995,7 @@
         <section class="section" id="s8">
             <div class="glass-panel text-overlay" data-animate style="pointer-events: auto;">
                 <h2 style="font-size: 1.6rem; margin-bottom: 10px; background: linear-gradient(to right, #fff, #e0f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">WHICH TRACK ARE YOU ON?</h2>
-                <p style="font-size: 0.85rem; margin-bottom: 40px; opacity: 0.7;">The biggest problems in cinema won\'t solve themselves.</p>
+                <p style="font-size: 0.85rem; margin-bottom: 40px; opacity: 0.7;">The biggest problems in cinema won't solve themselves.</p>
                 <form onsubmit="event.preventDefault(); alert('Welcome to the hack!');">
                     <input type="text" placeholder="IDENTIFICATION (NAME)" required>
                     <input type="email" placeholder="COMMS_LINK (EMAIL)" required>
@@ -1046,7 +1046,16 @@
             
             const startX = (Math.random() - 0.5) * 150;
             const startY = (Math.random() - 0.5) * 150;
-            const startZ = Math.random() * 500 - 200;
+            
+            // Add random dimensions and depths
+            const w = Math.floor(Math.random() * 200) + 80; // 80px to 280px
+            const h = w * 0.6; // maintain 16:9 ish ratio
+            screen.style.width = `${w}px`;
+            screen.style.height = `${h}px`;
+            
+            // Generate more varied Z-depth
+            const startZ = Math.random() * 800 - 400; // -400 to 400 depth spread
+
             const startRotX = Math.random() * 360;
             const startRotY = Math.random() * 360;
             
