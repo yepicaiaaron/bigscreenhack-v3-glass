@@ -895,8 +895,8 @@
         .split-word { display: inline-block; transform: translateY(110%); opacity: 0; will-change: transform, opacity; }
         
         .logos-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 60px; align-items: center; width: 100%; margin-top: 40px; }
-        .sponsor-logo { height: 40px; opacity: 0.5; filter: grayscale(100%) contrast(200%) brightness(200%); transition: all 0.4s ease; object-fit: contain; cursor: none; }
-        .sponsor-logo:hover { opacity: 1; filter: grayscale(0%) contrast(100%) brightness(100%); transform: scale(1.1); }
+        .sponsor-logo { height: 40px; opacity: 0.5;  transition: all 0.4s ease; object-fit: contain; cursor: none; }
+        .sponsor-logo:hover { opacity: 1;  transform: scale(1.1); }
 
     </style>
 
@@ -1461,6 +1461,129 @@
         
         
         
+        
+        // --- CUSTOM CURSOR ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorRing = document.getElementById('cursor-ring');
+        const cursorText = document.getElementById('cursor-text');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursorDot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+        });
+        
+        function renderCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            cursorRing.style.transform = `translate(${ringX}px, ${ringY}px) translate(-50%, -50%)`;
+            requestAnimationFrame(renderCursor);
+        }
+        renderCursor();
+        
+        document.querySelectorAll('a, button, .partner-band span, #audio-toggle, input').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover-btn'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover-btn'));
+        });
+
+        // --- AUDIO DESIGN ---
+        let audioCtx;
+        let droneOsc;
+        let droneGain;
+        let isSoundOn = false;
+        
+        const audioToggle = document.getElementById('audio-toggle');
+        const statusSpan = audioToggle.querySelector('.status');
+        
+        audioToggle.addEventListener('click', () => {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                droneOsc = audioCtx.createOscillator();
+                droneGain = audioCtx.createGain();
+                
+                droneOsc.type = 'sine';
+                droneOsc.frequency.setValueAtTime(40, audioCtx.currentTime); // Deep bass drone
+                
+                droneGain.gain.setValueAtTime(0, audioCtx.currentTime);
+                
+                droneOsc.connect(droneGain);
+                droneGain.connect(audioCtx.destination);
+                droneOsc.start();
+            }
+            
+            if (isSoundOn) {
+                droneGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+                audioToggle.classList.remove('sound-active');
+                statusSpan.innerText = "[OFF]";
+            } else {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                droneGain.gain.setTargetAtTime(0.4, audioCtx.currentTime, 0.5);
+                audioToggle.classList.add('sound-active');
+                statusSpan.innerText = "[ON]";
+            }
+            isSoundOn = !isSoundOn;
+        });
+        
+        window.addEventListener('scroll', () => {
+            if (!isSoundOn || !audioCtx) return;
+            
+            const velocity = Math.abs(window.scrollY - (window.lastScrollY || 0));
+            window.lastScrollY = window.scrollY;
+            
+            droneOsc.frequency.setTargetAtTime(40 + Math.min(velocity * 0.5, 30), audioCtx.currentTime, 0.1);
+            
+            // Only click if film grain is still active/visible
+            const grain = document.getElementById("film-grain");
+            const grainVisible = grain && window.getComputedStyle(grain).display !== "none";
+
+            if (grainVisible && velocity > 30 && Math.random() > 0.8) {
+                const clickOsc = audioCtx.createOscillator();
+                const clickGain = audioCtx.createGain();
+                clickOsc.type = 'square';
+                clickOsc.frequency.setValueAtTime(800 + Math.random()*1000, audioCtx.currentTime);
+                clickGain.gain.setValueAtTime(0.015, audioCtx.currentTime);
+                clickGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                clickOsc.connect(clickGain);
+                clickGain.connect(audioCtx.destination);
+                clickOsc.start();
+                clickOsc.stop(audioCtx.currentTime + 0.05);
+            }
+        });
+
+        // --- TEXT SPLITTING ---
+        document.querySelectorAll('.text-overlay p, .glass-card p').forEach(p => {
+            if(p.children.length > 2) return; 
+            const text = p.innerText;
+            p.innerHTML = '';
+            text.split(' ').forEach(word => {
+                const span = document.createElement('span');
+                span.className = 'split-line';
+                span.innerHTML = `<span class="split-word">${word}</span>`;
+                p.appendChild(span);
+            });
+        });
+        
+        const textObservers = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    gsap.to(entry.target.querySelectorAll('.split-word'), {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.6,
+                        stagger: 0.015,
+                        ease: "power3.out"
+                    });
+                    textObservers.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.text-overlay p, .glass-card p').forEach(p => textObservers.observe(p));
+
         // --- INTRO SEQUENCE LOGIC ---
         // Initial state - open bars slightly, show scroll prompt
         gsap.to("#cine-top", { height: "15vh", duration: 1.5, ease: "power2.inOut", delay: 0.5 });
@@ -1497,8 +1620,8 @@
         tlIntro.to("#word-hack", { opacity: 1, filter: "blur(0px)", scale: 1, duration: 0.3, ease: "power1.out" }, 2.5);
         tlIntro.to("#word-hack", { opacity: 0, filter: "blur(15px)", scale: 4, duration: 0.3, ease: "power2.in" }, 2.9);
         
-        // 5. Fade out film grain and scratches
-        tlIntro.to("#film-grain, .scratch", { opacity: 0, duration: 0.4 }, 3.1);
+        // 5. Fade out film grain and scratches and stop them
+        tlIntro.to("#film-grain, .scratch", { opacity: 0, duration: 0.4, onComplete: () => { document.getElementById("film-grain").style.display = "none"; document.querySelectorAll(".scratch").forEach(el => el.style.display = "none"); } }, 3.1);
 
         // 6. Play and Fade in video
         tlIntro.to("#intro-video", { opacity: 1, duration: 0.5, onStart: () => { document.getElementById('intro-video').play(); } }, 3.3);
