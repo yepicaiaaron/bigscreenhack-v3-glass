@@ -136,7 +136,7 @@
         }
 
         .screen::before {
-            content: \'\';
+            content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             border: none; /* Removed the weird border */
@@ -872,12 +872,45 @@
         .partner-band span:hover {
             color: #fff;
         }
+    
+        body, a, button { cursor: none !important; }
+        #cursor-dot { position: fixed; top: 0; left: 0; width: 6px; height: 6px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 10001; mix-blend-mode: difference; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; }
+        #cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.5); border-radius: 50%; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(0px); }
+        #cursor-text { color: transparent; font-family: 'Teko', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 2px; transition: color 0.3s; }
+        
+        body.cursor-hover-video #cursor-ring { width: 100px; height: 100px; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); border-color: transparent; }
+        body.cursor-hover-video #cursor-text { color: #fff; }
+        body.cursor-hover-btn #cursor-ring { width: 60px; height: 60px; border-color: #bae6fd; background: rgba(186, 230, 253, 0.2); }
+        body.cursor-hover-btn #cursor-dot { width: 0; height: 0; }
+
+        #audio-toggle { position: fixed; top: 40px; right: 40px; z-index: 10000; color: #fff; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; mix-blend-mode: difference; opacity: 0; animation: fadeIn 2s forwards 1s; display: flex; align-items: center; gap: 10px; pointer-events: auto; }
+        .sound-waves { display: flex; gap: 3px; height: 12px; align-items: center; }
+        .wave { width: 2px; height: 3px; background: #fff; transition: height 0.1s; }
+        .sound-active .wave { animation: bounceWave 0.5s infinite alternate; }
+        .sound-active .wave:nth-child(2) { animation-delay: 0.1s; }
+        .sound-active .wave:nth-child(3) { animation-delay: 0.2s; }
+        @keyframes bounceWave { to { height: 12px; } }
+
+        .split-line { overflow: hidden; display: inline-block; vertical-align: top; margin-right: 0.25em; }
+        .split-word { display: inline-block; transform: translateY(110%); opacity: 0; will-change: transform, opacity; }
+        
+        .logos-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 60px; align-items: center; width: 100%; margin-top: 40px; }
+        .sponsor-logo { height: 40px; opacity: 0.5; filter: grayscale(100%) contrast(200%) brightness(200%); transition: all 0.4s ease; object-fit: contain; cursor: none; }
+        .sponsor-logo:hover { opacity: 1; filter: grayscale(0%) contrast(100%) brightness(100%); transform: scale(1.1); }
+
     </style>
 
 
 </head>
 <body>
+
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"><span id="cursor-text"></span></div>
+
     <div class="site-logo">VIDEOSTACK.AI</div>
+
+    <div id="audio-toggle">SOUND <span class="status">[OFF]</span> <div class="sound-waves"><div class="wave"></div><div class="wave"></div><div class="wave"></div></div></div>
+
 
     
     
@@ -914,8 +947,8 @@
     </div>
 
 
-    <div id="intro-scroll-spacer" style="height: 800vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
-    <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 800vh;">
+    <div id="intro-scroll-spacer" style="height: 1200vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 1;"></div>
+    <div id="main-site-wrapper" style="opacity: 0; pointer-events: none; padding-top: 1200vh;">
 
 
 
@@ -1131,12 +1164,12 @@
             <div class="text-overlay" data-animate>
                 <h3>TRUSTED BY INDUSTRY LEADERS</h3>
                 <div class="logos-grid">
-                    <div class="logo-item">BFI</div>
-                    <div class="logo-item">CANNES</div>
-                    <div class="logo-item">BAFTA</div>
-                    <div class="logo-item">NFTS</div>
-                    <div class="logo-item">A24</div>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/BFI_logo.svg/1024px-BFI_logo.svg.png" class="sponsor-logo" alt="BFI">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Festival_de_Cannes_Logo.svg/1024px-Festival_de_Cannes_Logo.svg.png" class="sponsor-logo" alt="Cannes">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/BAFTA_logo.svg/1024px-BAFTA_logo.svg.png" class="sponsor-logo" alt="BAFTA">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/A24_logo.svg/1024px-A24_logo.svg.png" class="sponsor-logo" alt="A24">
                 </div>
+            </div>
             </div>
         </section>
 
@@ -1274,21 +1307,21 @@
         function updateScreens() {
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            const adjustedScroll = Math.max(0, scrollY - (window.innerHeight * 8));
-            const adjustedMax = maxScroll - (window.innerHeight * 8);
+            const adjustedScroll = Math.max(0, scrollY - (window.innerHeight * 12));
+            const adjustedMax = maxScroll - (window.innerHeight * 12);
             const progress = Math.min(adjustedScroll / (adjustedMax || 1), 1);
             
             // 1. Move Central Screens - Assembly Logic
             screens.forEach((s, i) => {
                 // Phase 1: Disperse into circular pattern (0 to 0.6 progress)
-                const phase1Progress = Math.min(progress / 0.6, 1);
-                
-                let currentX = s.startX + (s.targetX - s.startX) * phase1Progress;
-                let currentY = s.startY + (s.targetY - s.startY) * phase1Progress;
-                let currentZ = s.startZ + (s.targetZ - s.startZ) * phase1Progress;
-                let currentRotY = s.startRotY + phase1Progress * 20; // gentle drift, no flipping
-                let currentRotX = s.startRotX + phase1Progress * 15; // gentle drift
-                let currentOpacity = 0.1 + phase1Progress * 0.4;
+                const phase1Progress = Math.min(progress / 0.5, 1);
+                const easeOutExpo = phase1Progress === 1 ? 1 : 1 - Math.pow(2, -10 * phase1Progress);
+                let currentX = s.startX + (s.targetX - s.startX) * easeOutExpo;
+                let currentY = s.startY + (s.targetY - s.startY) * easeOutExpo;
+                let currentZ = s.startZ + (s.targetZ - s.startZ - (Math.random()*400 + 400)) * easeOutExpo; // explode backwards
+                let currentRotY = s.startRotY + easeOutExpo * 360;
+                let currentRotX = s.startRotX + easeOutExpo * 360;
+                let currentOpacity = 0.8 - (easeOutExpo * 0.5);
 
                 // Phase 2: Assemble into Building Grid (0.6 to 1.0 progress)
                 if (progress > 0.6) {
@@ -1407,11 +1440,13 @@
         
         frames.forEach(frame => {
             frame.addEventListener('mouseenter', () => {
+                document.body.classList.add('cursor-hover-video'); cursorText.innerText = "WATCH";
                 frame.isHovered = true;
                 frame.style.zIndex = '100';
                 updateScreens(); // Apply scale and opacity from render loop
             });
             frame.addEventListener('mouseleave', () => {
+                document.body.classList.remove('cursor-hover-video'); cursorText.innerText = "";
                 frame.isHovered = false;
                 frame.style.zIndex = '';
                 updateScreens(); // Revert back
